@@ -7,5 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 public class TeleOpMain extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
+        //I don't know I wish that code was easier
     }
 }
