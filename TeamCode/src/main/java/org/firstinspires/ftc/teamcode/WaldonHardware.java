@@ -50,33 +50,6 @@ public class WaldonHardware {
     public DistanceSensor rightDistanceSensor; //not used in teleop but defined anyways
     public ColorSensor p6Color; //not used in teleop but defined anyways
 
-    // Second, let's create some variables that we'll use as we write our code.
-    // MAKE SURE TO INITALIZE THE VARIABLES, DON'T JUST DECLARE THEM AS EMPTY UNLESS A CONTAINE
-
-    BNO055IMU.Parameters imuParameters;  // imuParameters is a container, so we'll have to initalize that upon startup
-
-    //AprilTagProcessor myAprilTagProcessor; // we're not using AprilTags in this version, so we don't need this
-
-    //Drive variables
-    double dTurn = 0;
-    double dDrive = 0;
-    double dGamePadDegree = 0;
-    double dMovement = 0;
-    double dForward = 0;
-    double dStrafe = 0;
-    double dDriveScale = 1;
-
-    double dLFDrivePower = 0;
-    double dLBDrivePower = 0;
-    double dRFDrivePower = 0;
-    double dRBDrivePower = 0;
-
-    double dDenominator  = 1; // don't set a denominator to 0 or we'll get a divide by 0 error
-
-    //Lift Varables
-    double LeftLiftPower = 0;
-    double RightLiftPower = 0;
-
     //Servo variables
     double dWristIn = 0.49;
     double dWristDeliver = 0.77;
@@ -148,6 +121,14 @@ public class WaldonHardware {
         rightfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightback_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        ScissorLeft.setDirection(DcMotor.Direction.FORWARD);
+        ScissorRight.setDirection(DcMotor.Direction.FORWARD);
+        ScissorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ScissorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+        // Initalize all of our servo positions.
+        p6servo.setPosition(Variables.p6servo);
         OutsidePixel.setPosition(Variables.OutsidePixelHome);
         InsidePixel.setPosition(Variables.InsidePixelHome);
         wrist.setPosition(Variables.wristHome);

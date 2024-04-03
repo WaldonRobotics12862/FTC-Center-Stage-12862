@@ -32,6 +32,27 @@ public class Variables {
     double CountsPerMotorRev = 537.7;
     public double countsPerInch = CountsPerMotorRev / WheelCircomference;
 
+
+    //Lift Varables
+    public double LeftLiftPower = 0;
+    public double RightLiftPower = 0;
+
+    //Servo variables
+    public static double dWristIn = 0.49;
+    public static double dWristDeliver = 0.77;
+    public static double dOutsideIn = 0.43;
+    public static double dOutside1Pixel = 0.65;
+    public static double dOutside2Pixel = 1;
+    public static double dInsideIn = 0;
+    public static double dInsideHold = 0.8;
+
+    public static double dIntakeSpeed = 0.9;
+
+    public static double dDronePos = 0.5;
+
+    public int iDeliveryState = 0;
+
+
     public Variables(LinearOpMode opmode) {
         this.opMode = opmode;
     }
