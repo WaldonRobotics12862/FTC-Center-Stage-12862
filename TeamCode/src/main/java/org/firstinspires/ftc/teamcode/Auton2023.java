@@ -1,180 +1,251 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@TeleOp(name = "Auton2023")
-public class Auton2023 {
-    // First, let's define all of the hardware elements that we will interface with.
-    // There are two constant rotation servos
-    private CRServo intake_servo_1;
-    private CRServo intake_servo_2;
+@Autonomous(name = "Auton2023")
+public class Auton2023 extends LinearOpMode {
+    WaldonHardware robot = new WaldonHardware(this);
+    Variables variables = new Variables(this);
+    int rightCenterLeft = 0;
+    double Left_Distance = 2000;
+    double Right_Distance = 2000;
+    double Center_Distance = 2000;
+    NormalizedRGBA CurrentColor;
 
-    //5 more regular servos
-    private Servo wrist;
-    private Servo InsidePixel;
-    private Servo p6servo;
-    private Servo OutsidePixel;
-    private Servo drone;
 
-    // 7 total motors
-    private DcMotor leftfront_drive;
-    private DcMotor leftback_drive;
-    private DcMotor rightback_drive;
-    private DcMotor rightfront_drive;
-    private DcMotor ScissorLeft;
-    private DcMotor ScissorRight;
-    private DcMotor Intake;
+    private void turnLeft() {
+        drive(0, 0, 22, 0.3);
+        robot.leftback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.leftfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 
-    // Now for all of our sensors: 3 distance, 1 IMU and 1 color
-    private BNO055IMU imu;
-    private DistanceSensor leftDistanceSensor;  //not used in teleop but defined anyways
-    private DistanceSensor centerDistanceSensor; //not used in teleop but defined anyways
-    private DistanceSensor rightDistanceSensor; //not used in teleop but defined anyways
-    private ColorSensor p6Color; //not used in teleop but defined anyways
+    private void turnRight() {
+        drive(0, 0, -22, 0.3);
+        robot.leftback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.leftfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 
-    // Second, let's create some variables that we'll use as we write our code.
-    // MAKE SURE TO INITALIZE THE VARIABLES, DON'T JUST DECLARE THEM AS EMPTY UNLESS A CONTAINE
+    private void p6() {
+        robot.p6servo.setPosition(0.5);
+    }
 
-    BNO055IMU.Parameters imuParameters;  // imuParameters is a container, so we'll have to initalize that upon startup
+    private void callStop() {
+        if (isStopRequested()) {
+            terminateOpModeNow();
+        }
+    }
 
-    //AprilTagProcessor myAprilTagProcessor; // we're not using AprilTags in this version, so we don't need this
+    private void drive(int forward, int strafe, int turn, double speed) {
+        // Forward/Backwards-Positve values go forward, Negative values go backwards
+        // Turn Left/Right Positve values turn left, Negative values will turn right, Power at 0.3 and Turn at 22 is very close to 90 degree turn
+        // Need to fine tune the turning values and make sure it is good
+        // Strafe Left/Right Positve values strafe left, Negative values strafe right, check this
+        robot.leftback_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.leftfront_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.rightback_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.rightfront_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.leftfront_drive.setTargetPosition((int) ((forward * -1 + strafe + turn * -1) * variables.countsPerInch));
+        robot.leftback_drive.setTargetPosition((int) ((forward * -1 - (strafe - turn * -1)) * variables.countsPerInch));
+        robot.rightfront_drive.setTargetPosition((int) ((forward * -1 - (strafe + turn * -1)) * variables.countsPerInch));
+        robot.rightback_drive.setTargetPosition((int) ((forward * -1 + (strafe - turn * -1)) * variables.countsPerInch));
+        robot.leftback_drive.setPower(speed * 1);
+        robot.leftfront_drive.setPower(speed * 1);
+        robot.rightback_drive.setPower(speed * 1);
+        robot.rightfront_drive.setPower(speed * 1);
+        robot.leftback_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.leftfront_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.rightback_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.rightfront_drive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        while (opModeIsActive() && robot.rightback_drive.isBusy() && robot.rightfront_drive.isBusy() && robot.leftback_drive.isBusy() && robot.leftfront_drive.isBusy()) {
+            callStop();
+        }
+        sleep(450);
+        robot.leftback_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.leftfront_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.rightback_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.rightfront_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.leftback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.leftfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    }
 
-    //Drive variables
-    double dTurn = 0;
-    double dDrive = 0;
-    double dGamePadDegree = 0;
-    double dMovement = 0;
-    double dForward = 0;
-    double dStrafe = 0;
-    double dDriveScale = 1;
 
-    double dLFDrivePower = 0;
-    double dLBDrivePower = 0;
-    double dRFDrivePower = 0;
-    double dRBDrivePower = 0;
+    private void DecideSpikeMark() {
+        Left_Distance = 2000;
+        Right_Distance = 2000;
+        Center_Distance = 2000;
 
-    double dDenominator = 1; // don't set a denominator to 0 or we'll get a divide by 0 error
+        if (robot.leftDistanceSensor.getDistance(DistanceUnit.INCH) < Left_Distance) {
+            Left_Distance = robot.leftDistanceSensor.getDistance(DistanceUnit.INCH);
+        }
+        if (robot.centerDistanceSensor.getDistance(DistanceUnit.INCH) < Center_Distance) {
+            Center_Distance = robot.centerDistanceSensor.getDistance(DistanceUnit.INCH);
+        }
+        if (robot.rightDistanceSensor.getDistance(DistanceUnit.INCH) < Right_Distance) {
+            Right_Distance = robot.rightDistanceSensor.getDistance(DistanceUnit.INCH);
+        }
+        telemetry.addData("Left", Left_Distance);
+        telemetry.addData("Center", Center_Distance);
+        telemetry.addData("Right", Right_Distance);
+        telemetry.update();
+        if (Right_Distance < 6) {
+            rightCenterLeft = 3;
+        } else if (Left_Distance < 6) {
+            rightCenterLeft = 1;
+        } else {
+            rightCenterLeft = 2;
+        }
+    }
 
-    //Lift Varables
-    double LeftLiftPower = 0;
-    double RightLiftPower = 0;
+    private void StrafeRightToSpikeMark() {
+        robot.leftback_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.leftfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.rightback_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.rightfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.leftback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.leftfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.leftfront_drive.setPower(-0.3);
+        robot.leftback_drive.setPower(0.3);
+        robot.rightback_drive.setPower(-0.3);
+        robot.rightfront_drive.setPower(0.3);
+        while (opModeIsActive()) {
+            CurrentColor = ((NormalizedColorSensor) robot.p6Color).getNormalizedColors();
+            telemetry.addData("Blue", robot.p6Color.blue());
+            telemetry.addData("Red", robot.p6Color.red());
+            telemetry.update();
+            if (robot.p6Color.blue() >= Variables.blue_threshold || robot.p6Color.red() >= Variables.red_threshold) {
+                robot.leftback_drive.setPower(0);
+                robot.leftfront_drive.setPower(0);
+                robot.rightback_drive.setPower(0);
+                robot.rightfront_drive.setPower(0);
+                break;
+            }
+        }
+    }
 
-    //Servo variables
-    double dWristIn = 0.49;
-    double dWristDeliver = 0.77;
-    double dOutsideIn = 0.43;
-    double dOutside1Pixel = 0.65;
-    double dOutside2Pixel = 1;
-    double dInsideIn = 0;
-    double dInsideHold = 0.8;
+    private void DriveToWall() {
+        robot.leftback_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.leftfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.rightback_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.rightfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.leftback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.leftfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.leftback_drive.setPower(-0.2);
+        robot.leftfront_drive.setPower(-0.2);
+        robot.rightback_drive.setPower(-0.2);
+        robot.rightfront_drive.setPower(-0.2);
+        Center_Distance = robot.centerDistanceSensor.getDistance(DistanceUnit.CM);
+        while (Center_Distance > 10) {
+            Center_Distance = robot.centerDistanceSensor.getDistance(DistanceUnit.CM);
+            telemetry.addData("Center", Center_Distance);
+            telemetry.update();
+            if (Center_Distance < 10) {
+                robot.leftback_drive.setPower(0);
+                robot.leftfront_drive.setPower(0);
+                robot.rightback_drive.setPower(0);
+                robot.rightfront_drive.setPower(0);
+                break;
+            }
+        }
+    }
 
-    double dDronePos = 0.5;
-
-    int iDeliveryState = 0;
-
-    double dInsidePixelServo = dInsideHold;
-    double dWristServo = dWristIn;
-    double dOutsidePixel = dOutsideIn;
-    double dIntakeSpeed = 0;
-    double dP6ServoPosition = 0;
-
+    private void DriveToSpike() {
+        robot.leftback_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.leftfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.rightback_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.rightfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.leftback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.leftfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.rightfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        robot.leftback_drive.setPower(-0.2);
+        robot.leftfront_drive.setPower(-0.2);
+        robot.rightback_drive.setPower(-0.2);
+        robot.rightfront_drive.setPower(-0.2);
+        while (opModeIsActive()) {
+            CurrentColor = ((NormalizedColorSensor) robot.p6Color).getNormalizedColors();
+            telemetry.addData("Blue", robot.p6Color.blue());
+            telemetry.addData("Red", robot.p6Color.red());
+            telemetry.update();
+            if (robot.p6Color.blue() >= Variables.blue_threshold || robot.p6Color.red() >= Variables.red_threshold) {
+                robot.leftback_drive.setPower(0);
+                robot.leftfront_drive.setPower(0);
+                robot.rightback_drive.setPower(0);
+                robot.rightfront_drive.setPower(0);
+                robot.leftback_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.leftfront_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.rightback_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                robot.rightfront_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                break;
+            }
+        }
+    }
     @Override
     public void runOpMode() {
+        robot.initialize();
 
-        //**************************************************************//
-        //                                                              //
-        // Create a hardware map section to address all of our physical //
-        // robot parts.  For each, we'll declare baseically a variable  //
-        // and set it equal to the hareware map and call the class of   //
-        // the part.  For instance, a motor or a servo.                 //
-        //                                                              //
-        // These should match the section before the main loop where we //
-        // first declare these as variables to use                      //
-        //                                                              //
-        //**************************************************************//
+        ElapsedTime Timer;
+        Timer = new ElapsedTime();
 
-        //2 Constant Rotation Servos
-        intake_servo_1 = hardwareMap.get(CRServo.class, "intake1");
-        intake_servo_2 = hardwareMap.get(CRServo.class, "intake2");
-
-        //5 Regular Servos
-        wrist = hardwareMap.get(Servo.class, "wrist");
-        InsidePixel = hardwareMap.get(Servo.class, "InsidePixel");
-        p6servo = hardwareMap.get(Servo.class, "p6servo");
-        OutsidePixel = hardwareMap.get(Servo.class, "OutsidePixel");
-        drone = hardwareMap.get(Servo.class, "drone");
-
-        //7 Motors
-        leftfront_drive = hardwareMap.get(DcMotor.class, "leftfront_drive");
-        leftback_drive = hardwareMap.get(DcMotor.class, "leftback_drive");
-        rightback_drive = hardwareMap.get(DcMotor.class, "rightback_drive");
-        rightfront_drive = hardwareMap.get(DcMotor.class, "rightfront_drive");
-        ScissorLeft = hardwareMap.get(DcMotor.class, "ScissorLeft");
-        ScissorRight = hardwareMap.get(DcMotor.class, "ScissorRight");
-        Intake = hardwareMap.get(DcMotor.class, "Intake");
-
-        //Sensors
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        leftDistanceSensor = hardwareMap.get(DistanceSensor.class, "leftDistanceSensor");
-        centerDistanceSensor = hardwareMap.get(DistanceSensor.class, "centerDistanceSensor");
-        rightDistanceSensor = hardwareMap.get(DistanceSensor.class, "rightDistanceSensor");
-        p6Color = hardwareMap.get(ColorSensor.class, "P6Color");
-
-        // Now, we can create our main loop
-
-        //**************************************************************//
-        //                                                              //
-        // The following is our initialize block of code where we set   //
-        // up everything from motor directions to the initial servo     //
-        // rotation position.                                           //
-        //                                                              //
-        //**************************************************************//
-
-        // Any final set-up of things that we need to take care of, change direction of motors, etc.
-        intake_servo_1.setDirection(CRServo.Direction.REVERSE);
-        intake_servo_2.setDirection(CRServo.Direction.FORWARD);
-
-        leftfront_drive.setDirection(DcMotor.Direction.FORWARD);
-        leftback_drive.setDirection(DcMotor.Direction.FORWARD);
-        rightback_drive.setDirection(DcMotor.Direction.REVERSE);
-        rightfront_drive.setDirection(DcMotor.Direction.REVERSE);
-
-        ScissorLeft.setDirection(DcMotor.Direction.FORWARD);
-        ScissorRight.setDirection(DcMotor.Direction.FORWARD);
-
-        leftback_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightback_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        ScissorLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        ScissorRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        // Initalize parameters that we couldn't just set values to
-        init_IMU();
-
-        // Initalize all of our servo positions.
-        p6servo.setPosition(dP6ServoPosition);
-        wrist.setPosition(dWristServo);
-        InsidePixel.setPosition(dInsidePixelServo);
-        OutsidePixel.setPosition(dOutsidePixel);
-
-        // Wait for the match to begin.
+        // Wait for the game to start (driver presses PLAY)
         waitForStart();
-
+        drive(26, 0, 0, 0.5);
+        DriveToSpike();
+        drive(-2, 0, 0, 0.2);
+        DecideSpikeMark();
+        if (rightCenterLeft == 1) {
+            // Left Spike Mark
+            drive(-5, 0, 0, 0.3);
+            drive(0, -5, 0, 0.3);
+            turnLeft();
+            DriveToSpike();
+            sleep(100);
+            p6();
+            sleep(1000);
+            drive(-15, 0, 0, 0.6);
+            turnRight();
+            drive(-32, 0, 0, 0.6);
+            drive(0, -47, 0, 0.6);
+            robot.wrist.setPosition(Variables.wristDelivery);
+        } else if (rightCenterLeft == 3) {
+            // Right Spike Mark
+            StrafeRightToSpikeMark();
+            sleep(100);
+            p6();
+            sleep(1000);
+            drive(-30, 0, 0, 0.5);
+            drive(0, -60, 0, 0.5);
+            robot.wrist.setPosition(Variables.wristDelivery);
+        } else {
+            // Center Spike Mark
+            DriveToSpike();
+            sleep(100);
+            p6();
+            sleep(1000);
+            drive(-11, 0, 0, 0.6);
+            drive(0, -30, 0, 0.6);
+            drive(7, 0, 0, 0.6);
+            turnRight();
+            robot.wrist.setPosition(Variables.wristDelivery);
+            DriveToWall();
+            robot.InsidePixel.setPosition(Variables.InsidePixelSingle);
+            robot.OutsidePixel.setPosition(Variables.OutsidePixelSingle);
+        }
     }
 }

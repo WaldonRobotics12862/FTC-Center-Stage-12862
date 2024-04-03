@@ -3,22 +3,13 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.JavaUtil;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class WaldonHardware {
 
@@ -104,9 +95,8 @@ public class WaldonHardware {
     double dOutsidePixel = dOutsideIn;
     double dIntakeSpeed = 0;
     double dP6ServoPosition = 0;
-    public WaldonHardware(HardwareMap baseHMap, LinearOpMode opmode) {
+    public WaldonHardware(LinearOpMode opmode) {
         this.opMode = opmode;
-        this.WaldonHMap = baseHMap;
     }
 
     public void initialize(){
@@ -145,6 +135,21 @@ public class WaldonHardware {
         rightDistanceSensor = WaldonHMap.get(DistanceSensor.class, "rightDistanceSensor");
         p6Color = WaldonHMap.get(ColorSensor.class, "P6Color");
 
-    }
+        leftfront_drive.setDirection(DcMotor.Direction.REVERSE);
+        leftback_drive.setDirection(DcMotor.Direction.REVERSE);
+        rightback_drive.setDirection(DcMotor.Direction.FORWARD);
+        rightfront_drive.setDirection(DcMotor.Direction.FORWARD);
+        leftback_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftfront_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightback_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightfront_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftback_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightback_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        OutsidePixel.setPosition(Variables.OutsidePixelHome);
+        InsidePixel.setPosition(Variables.InsidePixelHome);
+        wrist.setPosition(Variables.wristHome);
+    }
 }

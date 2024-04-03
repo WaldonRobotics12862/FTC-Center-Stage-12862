@@ -19,14 +19,10 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 /***
  *
  * robot hardware map
- * Dragon$11691
+ * Dragon$12862
  */
 public class RobotHardwareMap {
 
-    //0 - FL
-    //1 - FR
-    //2 - RL
-    //3 - RR
     private LinearOpMode opMode = null;
     public HardwareMap baseHMap;
 
