@@ -1,3 +1,5 @@
+
+
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
@@ -11,10 +13,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+
+
 public class WaldonHardware {
 
-    public LinearOpMode opMode = null;   // gain access to methods in the calling OpMode.
-    public HardwareMap WaldonHMap;
+    public LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
+    // public HardwareMap WaldonHardware;
 
     public VoltageSensor controlHubBatteryVoltage;
     public VoltageSensor expansionHubBatteryVoltage;
@@ -68,45 +72,46 @@ public class WaldonHardware {
     double dOutsidePixel = dOutsideIn;
     double dIntakeSpeed = 0;
     double dP6ServoPosition = 0;
-    public WaldonHardware(LinearOpMode opmode) {
-        this.opMode = opmode;
+//    public WaldonHardware (LinearOpMode opmode) {this.opMode = opmode;}
+    public WaldonHardware (LinearOpMode opmode) {
+        myOpMode = opmode;
     }
 
     public void initialize(){
-        opMode.telemetry.addData("Status", "detecting...");
+        myOpMode.telemetry.addData("Status", "detecting...");
 
-        controlHubBatteryVoltage = WaldonHMap.get(VoltageSensor.class, "Control Hub");
-        expansionHubBatteryVoltage = WaldonHMap.get(VoltageSensor.class, "Expansion Hub 2");
-        controlHub = WaldonHMap.get(LynxModule.class, "Control Hub");
-        expansionHub = WaldonHMap.get(LynxModule.class, "Expansion Hub 2");
+        //controlHubBatteryVoltage = WaldonHardware.get(VoltageSensor.class, "Control Hub");
+        //expansionHubBatteryVoltage = WaldonHardware.get(VoltageSensor.class, "Expansion Hub 2");
+        //controlHub = WaldonHardware.get(LynxModule.class, "Control Hub");
+        //expansionHub = WaldonHardware.get(LynxModule.class, "Expansion Hub 2");
 
 
         //2 Constant Rotation Servos
-        intake_servo_1 = WaldonHMap.get(CRServo.class, "intake1");
-        intake_servo_2 = WaldonHMap.get(CRServo.class, "intake2");
+        intake_servo_1 = myOpMode.hardwareMap.get(CRServo.class, "intake1");
+        intake_servo_2 = myOpMode.hardwareMap.get(CRServo.class, "intake2");
 
         //5 Regular Servos
-        wrist = WaldonHMap.get(Servo.class, "wrist");
-        InsidePixel = WaldonHMap.get(Servo.class, "InsidePixel");
-        p6servo = WaldonHMap.get(Servo.class, "p6servo");
-        OutsidePixel = WaldonHMap.get(Servo.class, "OutsidePixel");
-        drone = WaldonHMap.get(Servo.class, "drone");
+        wrist = myOpMode.hardwareMap.get(Servo.class, "wrist");
+        InsidePixel = myOpMode.hardwareMap.get(Servo.class, "InsidePixel");
+        p6servo = myOpMode.hardwareMap.get(Servo.class, "p6servo");
+        OutsidePixel = myOpMode.hardwareMap.get(Servo.class, "OutsidePixel");
+        drone = myOpMode.hardwareMap.get(Servo.class, "drone");
 
         //7 Motors
-        leftfront_drive = WaldonHMap.get(DcMotor.class, "leftfront_drive");
-        leftback_drive = WaldonHMap.get(DcMotor.class, "leftback_drive");
-        rightback_drive = WaldonHMap.get(DcMotor.class, "rightback_drive");
-        rightfront_drive = WaldonHMap.get(DcMotor.class, "rightfront_drive");
-        ScissorLeft = WaldonHMap.get(DcMotor.class, "ScissorLeft");
-        ScissorRight = WaldonHMap.get(DcMotor.class, "ScissorRight");
-        Intake = WaldonHMap.get(DcMotor.class, "Intake");
+        leftfront_drive = myOpMode.hardwareMap.get(DcMotor.class, "leftfront_drive");
+        leftback_drive = myOpMode.hardwareMap.get(DcMotor.class, "leftback_drive");
+        rightback_drive = myOpMode.hardwareMap.get(DcMotor.class, "rightback_drive");
+        rightfront_drive = myOpMode.hardwareMap.get(DcMotor.class, "rightfront_drive");
+        ScissorLeft = myOpMode.hardwareMap.get(DcMotor.class, "ScissorLeft");
+        ScissorRight = myOpMode.hardwareMap.get(DcMotor.class, "ScissorRight");
+        Intake = myOpMode.hardwareMap.get(DcMotor.class, "Intake");
 
         //Sensors
-        imu = WaldonHMap.get(BNO055IMU.class, "imu");
-        leftDistanceSensor = WaldonHMap.get(DistanceSensor.class, "leftDistanceSensor");
-        centerDistanceSensor = WaldonHMap.get(DistanceSensor.class, "centerDistanceSensor");
-        rightDistanceSensor = WaldonHMap.get(DistanceSensor.class, "rightDistanceSensor");
-        p6Color = WaldonHMap.get(ColorSensor.class, "P6Color");
+        imu = myOpMode.hardwareMap.get(BNO055IMU.class, "imu");
+        leftDistanceSensor = myOpMode.hardwareMap.get(DistanceSensor.class, "leftDistanceSensor");
+        centerDistanceSensor = myOpMode.hardwareMap.get(DistanceSensor.class, "centerDistanceSensor");
+        rightDistanceSensor = myOpMode.hardwareMap.get(DistanceSensor.class, "rightDistanceSensor");
+        p6Color = myOpMode.hardwareMap.get(ColorSensor.class, "P6Color");
 
         leftfront_drive.setDirection(DcMotor.Direction.REVERSE);
         leftback_drive.setDirection(DcMotor.Direction.REVERSE);
