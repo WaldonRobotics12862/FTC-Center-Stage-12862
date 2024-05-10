@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<Robot type="FirstInspires-FTC">
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Control Hub" port="173">
+            <goBILDA5202SeriesMotor name="leftfront_drive" port="0" />
+            <goBILDA5202SeriesMotor name="leftback_drive" port="1" />
+            <goBILDA5202SeriesMotor name="rightback_drive" port="2" />
+            <goBILDA5202SeriesMotor name="rightfront_drive" port="3" />
+            <Servo name="p6servo" port="0" />
+            <Servo name="wrist" port="2" />
+            <Servo name="drone" port="5" />
+            <RevColorSensorV3 name="P6Color" port="0" bus="3" />
+            <LynxEmbeddedIMU name="imu" port="0" bus="0" />
+        </LynxModule>
+        <LynxModule name="Expansion Hub 2" port="2">
+            <goBILDA5202SeriesMotor name="ScissorLeft" port="0" />
+            <goBILDA5202SeriesMotor name="ScissorRight" port="1" />
+            <RevRobotics20HDHexMotor name="Intake" port="2" />
+            <Servo name="InsidePixel" port="1" />
+            <Servo name="OutsidePixel" port="2" />
+            <ContinuousRotationServo name="intake1" port="3" />
+            <ContinuousRotationServo name="intake2" port="5" />
+            <DigitalDevice name="TopLimitSwitch" port="0" />
+            <DigitalDevice name="BottomLimitSwitch" port="1" />
+            <REV_VL53L0X_RANGE_SENSOR name="centerDistanceSensor" port="0" bus="3" />
+            <REV_VL53L0X_RANGE_SENSOR name="leftDistanceSensor" port="0" bus="1" />
+            <REV_VL53L0X_RANGE_SENSOR name="rightDistanceSensor" port="0" bus="2" />
+        </LynxModule>
+    </LynxUsbDevice>
+</Robot>
