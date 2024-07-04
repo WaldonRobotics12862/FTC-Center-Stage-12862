@@ -53,6 +53,7 @@ public class WaldonHardware {
     public DistanceSensor centerDistanceSensor; //not used in teleop but defined anyways
     public DistanceSensor rightDistanceSensor; //not used in teleop but defined anyways
     public ColorSensor p6Color; //not used in teleop but defined anyways
+    public SparkFunOTOS myOtos;
 
     //Servo variables
     double dWristIn = 0.49;
@@ -72,6 +73,10 @@ public class WaldonHardware {
     double dOutsidePixel = dOutsideIn;
     double dIntakeSpeed = 0;
     double dP6ServoPosition = 0;
+
+    public SparkFunOTOS.Pose2D offset = new SparkFunOTOS.Pose2D(0, 0, 0);
+    public SparkFunOTOS.Pose2D currentPosition = new SparkFunOTOS.Pose2D(0, 0, 0);
+
 //    public WaldonHardware (LinearOpMode opmode) {this.opMode = opmode;}
     public WaldonHardware (LinearOpMode opmode) {
         myOpMode = opmode;
@@ -112,6 +117,7 @@ public class WaldonHardware {
         centerDistanceSensor = myOpMode.hardwareMap.get(DistanceSensor.class, "centerDistanceSensor");
         rightDistanceSensor = myOpMode.hardwareMap.get(DistanceSensor.class, "rightDistanceSensor");
         p6Color = myOpMode.hardwareMap.get(ColorSensor.class, "P6Color");
+        myOtos = myOpMode.hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
 
         leftfront_drive.setDirection(DcMotor.Direction.REVERSE);
         leftback_drive.setDirection(DcMotor.Direction.REVERSE);
@@ -137,5 +143,15 @@ public class WaldonHardware {
         OutsidePixel.setPosition(Variables.OutsidePixelHome);
         InsidePixel.setPosition(Variables.InsidePixelHome);
         wrist.setPosition(Variables.wristHome);
+
+        // Initalize the OTOS position and orientation sensor;
+        myOtos.setLinearUnit(SparkFunOTOS.LinearUnit.INCHES);
+        myOtos.setAngularUnit(SparkFunOTOS.AngularUnit.DEGREES);
+        myOtos.setOffset(offset);
+        myOtos.setLinearScalar(1.0);
+        myOtos.setAngularScalar(1.0);
+        myOtos.calibrateImu();
+        myOtos.resetTracking();
+        myOtos.setPosition(currentPosition);
     }
 }

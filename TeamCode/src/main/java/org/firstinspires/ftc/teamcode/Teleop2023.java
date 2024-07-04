@@ -49,9 +49,14 @@ public class Teleop2023 extends LinearOpMode {
          // Wait for the match to begin.
         waitForStart();
         while (opModeIsActive()) {
+            SparkFunOTOS.Pose2D pos = robot.myOtos.getPosition();
+
             telemetry.addData("Strafe", dStrafe);
             telemetry.addData("Forward", dForward);
             telemetry.addData("Turn", dTurn);
+            telemetry.addData("X coordinate", pos.x);
+            telemetry.addData("Y coordinate", pos.y);
+            telemetry.addData("Heading angle", pos.h);
             telemetry.update(); // Push telemetry to the Driver Station.
 
             GetDriverController();
@@ -64,8 +69,11 @@ public class Teleop2023 extends LinearOpMode {
             Drone();
 
             Drive();
+
         }
     }
+
+
 
     private void init_IMU(){
         imuParameters = new BNO055IMU.Parameters();
