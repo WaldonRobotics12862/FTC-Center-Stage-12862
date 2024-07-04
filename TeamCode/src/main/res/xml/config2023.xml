@@ -10,6 +10,7 @@
             <Servo name="wrist" port="2" />
             <Servo name="drone" port="5" />
             <RevColorSensorV3 name="P6Color" port="0" bus="3" />
+            <SparkFunOTOS name="sensor_otos" port="0" bus="3" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
         </LynxModule>
         <LynxModule name="Expansion Hub 2" port="2">
