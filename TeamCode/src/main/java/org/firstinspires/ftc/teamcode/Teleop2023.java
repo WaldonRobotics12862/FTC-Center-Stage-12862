@@ -20,7 +20,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 public class Teleop2023 extends LinearOpMode {
 
     WaldonHardware robot = new WaldonHardware(this);
-//    Variables variables = new Variables(this);
+    Variables variables = new Variables(this);
 
     double dTurn = 0;
     double dDrive = 0;
@@ -46,6 +46,7 @@ public class Teleop2023 extends LinearOpMode {
     @Override
     public void runOpMode() {
          robot.initialize();
+         init_IMU();
          // Wait for the match to begin.
         waitForStart();
         while (opModeIsActive()) {
