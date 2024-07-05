@@ -3,13 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-//import com.qualcomm.robotcore.hardware.CRServo;
-//import com.qualcomm.robotcore.hardware.ColorSensor;
-//import com.qualcomm.robotcore.hardware.DcMotor;
-//import com.qualcomm.robotcore.hardware.DistanceSensor;
-//import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
-
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -22,27 +16,6 @@ public class Teleop2023 extends LinearOpMode {
     WaldonHardware robot = new WaldonHardware(this);
     Variables variables = new Variables(this);
 
-    double dTurn = 0;
-    double dDrive = 0;
-    double dGamePadDegree = 0;
-    double dMovement = 0;
-    double dForward = 0;
-    double dStrafe = 0;
-    double dDriveScale = 1;
-
-    double dLFDrivePower = 0;
-    double dLBDrivePower = 0;
-    double dRFDrivePower = 0;
-    double dRBDrivePower = 0;
-
-    //Lift Varables
-    double LeftLiftPower = 0;
-    double RightLiftPower = 0;
-
-    int iDeliveryState = 0;
-    BNO055IMU.Parameters imuParameters;  // imuParameters is a container, so we'll have to initalize that upon startup
-    public double dDenominator  = 1; // don't set a denominator to 0 or we'll get a divide by 0 error
-
     @Override
     public void runOpMode() {
          robot.initialize();
@@ -52,9 +25,9 @@ public class Teleop2023 extends LinearOpMode {
         while (opModeIsActive()) {
             SparkFunOTOS.Pose2D pos = robot.myOtos.getPosition();
 
-            telemetry.addData("Strafe", dStrafe);
-            telemetry.addData("Forward", dForward);
-            telemetry.addData("Turn", dTurn);
+            telemetry.addData("Strafe", variables.dStrafe);
+            telemetry.addData("Forward", variables.dForward);
+            telemetry.addData("Turn", variables.dTurn);
             telemetry.addData("X coordinate", pos.x);
             telemetry.addData("Y coordinate", pos.y);
             telemetry.addData("Heading angle", pos.h);
@@ -77,12 +50,12 @@ public class Teleop2023 extends LinearOpMode {
 
 
     private void init_IMU(){
-        imuParameters = new BNO055IMU.Parameters();
-        imuParameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        imuParameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        imuParameters.mode = BNO055IMU.SensorMode.IMU;
+        variables.imuParameters = new BNO055IMU.Parameters();
+        variables.imuParameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
+        variables.imuParameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        variables.imuParameters.mode = BNO055IMU.SensorMode.IMU;
 
-        robot.imu.initialize(imuParameters);
+        robot.imu.initialize(variables.imuParameters);
     }
 
     private double dGetZAxis() {
@@ -108,24 +81,24 @@ public class Teleop2023 extends LinearOpMode {
             robot.dP6ServoPosition = 0.5;
         }
         if (gamepad1.left_bumper) {
-            dDriveScale = 0.68;
+            variables.dDriveScale = 0.68;
         }
         if (gamepad1.right_bumper) {
-            dDriveScale = 0.5;
+            variables.dDriveScale = 0.5;
         }
         // Calculate the drive parameters
-        dTurn = (-gamepad1.right_stick_x * dDriveScale); // adding the (double) casts this as a double variable to match the dTurn.  Not sure if the right_stick_x is a double by default or not)
-        dDrive = Range.clip(Math.sqrt(Math.pow(gamepad1.left_stick_y, 2) + Math.pow(gamepad1.left_stick_x, 2)), 0, 1);  // dDrive = sqrt(Y^2 + X^2). the clipping function clips any values to be just between 0 and 1
-        dGamePadDegree = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) / Math.PI * 180; // calculate the angle by use of the arc tangent
-        dMovement = dGamePadDegree - dGetZAxis();
-        dStrafe = Math.cos(dMovement / 180 * Math.PI) * dDrive * dDriveScale;
-        dForward = Math.sin(dMovement / 180 * Math.PI) * dDrive * dDriveScale;
+        variables.dTurn = (-gamepad1.right_stick_x * variables.dDriveScale); // adding the (double) casts this as a double variable to match the dTurn.  Not sure if the right_stick_x is a double by default or not)
+        variables.dDrive = Range.clip(Math.sqrt(Math.pow(gamepad1.left_stick_y, 2) + Math.pow(gamepad1.left_stick_x, 2)), 0, 1);  // dDrive = sqrt(Y^2 + X^2). the clipping function clips any values to be just between 0 and 1
+        variables.dGamePadDegree = Math.atan2(-gamepad1.left_stick_y, gamepad1.left_stick_x) / Math.PI * 180; // calculate the angle by use of the arc tangent
+        variables.dMovement = variables.dGamePadDegree - dGetZAxis();
+        variables.dStrafe = Math.cos(variables.dMovement / 180 * Math.PI) * variables.dDrive * variables.dDriveScale;
+        variables.dForward = Math.sin(variables.dMovement / 180 * Math.PI) * variables.dDrive * variables.dDriveScale;
 
-        dDenominator = JavaUtil.maxOfList(JavaUtil.createListWith(Math.abs(dForward) + Math.abs(dStrafe + Math.abs(dTurn)), 1));
-        dLFDrivePower = ((dForward * Math.abs(dForward) + dStrafe * Math.abs(dStrafe)) + dTurn) / dDenominator;
-        dRFDrivePower = ((dForward * Math.abs(dForward) - dStrafe * Math.abs(dStrafe)) - dTurn) / dDenominator;
-        dLBDrivePower = ((dForward * Math.abs(dForward) + dStrafe * Math.abs(dStrafe)) - dTurn) / dDenominator;
-        dLFDrivePower = ((dForward * Math.abs(dForward) - dStrafe * Math.abs(dStrafe)) + dTurn) / dDenominator;
+        variables.dDenominator = JavaUtil.maxOfList(JavaUtil.createListWith(Math.abs(variables.dForward) + Math.abs(variables.dStrafe + Math.abs(variables.dTurn)), 1));
+        variables.dLFDrivePower = ((variables.dForward * Math.abs(variables.dForward) + variables.dStrafe * Math.abs(variables.dStrafe)) + variables.dTurn) / variables.dDenominator;
+        variables.dRFDrivePower = ((variables.dForward * Math.abs(variables.dForward) - variables.dStrafe * Math.abs(variables.dStrafe)) - variables.dTurn) / variables.dDenominator;
+        variables.dLBDrivePower = ((variables.dForward * Math.abs(variables.dForward) + variables.dStrafe * Math.abs(variables.dStrafe)) - variables.dTurn) / variables.dDenominator;
+        variables.dLFDrivePower = ((variables.dForward * Math.abs(variables.dForward) - variables.dStrafe * Math.abs(variables.dStrafe)) + variables.dTurn) / variables.dDenominator;
     }
 
     private void GetCoPilotController(){
@@ -140,16 +113,16 @@ public class Teleop2023 extends LinearOpMode {
         //gamepad2.a		=
         //gamepad2.x		=
         if (gamepad2.a){
-            iDeliveryState = 0;
+            variables.iDeliveryState = 0;
         }
         if (gamepad2.b){
-            iDeliveryState = 1;
+            variables.iDeliveryState = 1;
         }
         if (gamepad2.x){
-            if (iDeliveryState == 2){
-                iDeliveryState = 3;
+            if (variables.iDeliveryState == 2){
+                variables.iDeliveryState = 3;
             } else {
-                iDeliveryState = 2;
+                variables.iDeliveryState = 2;
             }
         }
         if (gamepad2.guide){
@@ -157,74 +130,74 @@ public class Teleop2023 extends LinearOpMode {
         }
         if (gamepad2.dpad_down) {
             //set both lift powers to -1
-            LeftLiftPower = -1;
-            RightLiftPower = -1;
+            variables.LeftLiftPower = -1;
+            variables.RightLiftPower = -1;
         } else if (gamepad2.dpad_up) {
             // set both lift powers to 1
-            LeftLiftPower = 1;
-            RightLiftPower = 1;
+            variables.LeftLiftPower = 1;
+            variables.RightLiftPower = 1;
         } else {
             // set both lift powers to the trigger value so that we can gracefully lower them
-            LeftLiftPower = -gamepad2.left_trigger;
-            RightLiftPower = -gamepad2.right_trigger;
+            variables.LeftLiftPower = -gamepad2.left_trigger;
+            variables.RightLiftPower = -gamepad2.right_trigger;
         }
 
         if (gamepad2.left_bumper){
-            robot.dIntakeSpeed = 1;
+            variables.dIntakeSpeed = 1;
         } else if (gamepad2.right_bumper){
-            robot.dIntakeSpeed = -1;
+            variables.dIntakeSpeed = -1;
         } else {
-            robot.dIntakeSpeed = 0;
+            variables.dIntakeSpeed = 0;
         }
     }
 
     private void Deliver_Mechanism(){
-        switch(iDeliveryState) {
+        switch(variables.iDeliveryState) {
             case 0: //reset
-                robot.wrist.setPosition(Variables.dWristIn);
-                robot.InsidePixel.setPosition(Variables.dInsideIn);
-                robot.OutsidePixel.setPosition(Variables.dOutsideIn);
+                robot.wrist.setPosition(variables.dWristIn);
+                robot.InsidePixel.setPosition(variables.dInsideIn);
+                robot.OutsidePixel.setPosition(variables.dOutsideIn);
                 break;
             case 1: //Deliver setup
-                robot.wrist.setPosition(Variables.dWristDeliver);
-                robot.InsidePixel.setPosition(Variables.dInsideHold);
-                robot.OutsidePixel.setPosition(Variables.dOutsideIn);
+                robot.wrist.setPosition(variables.dWristDeliver);
+                robot.InsidePixel.setPosition(variables.dInsideHold);
+                robot.OutsidePixel.setPosition(variables.dOutsideIn);
                 break;
             case 2: //Deliver pixel
-                robot.wrist.setPosition(Variables.dWristDeliver);
-                robot.InsidePixel.setPosition(Variables.dInsideHold);
-                robot.OutsidePixel.setPosition(Variables.dOutside1Pixel);
+                robot.wrist.setPosition(variables.dWristDeliver);
+                robot.InsidePixel.setPosition(variables.dInsideHold);
+                robot.OutsidePixel.setPosition(variables.dOutside1Pixel);
                 break;
             case 3: // Deliver second pixel
-                robot.wrist.setPosition(Variables.dWristDeliver);
-                robot.InsidePixel.setPosition(Variables.dInsideHold);
-                robot.OutsidePixel.setPosition(Variables.dOutside2Pixel);
+                robot.wrist.setPosition(variables.dWristDeliver);
+                robot.InsidePixel.setPosition(variables.dInsideHold);
+                robot.OutsidePixel.setPosition(variables.dOutside2Pixel);
         }
     }
 
     private void Intake(){
-        robot.Intake.setPower(Variables.dIntakeSpeed);
-        robot.intake_servo_1.setPower(Variables.dIntakeSpeed);
-        robot.intake_servo_2.setPower(Variables.dIntakeSpeed);
+        robot.Intake.setPower(variables.dIntakeSpeed);
+        robot.intake_servo_1.setPower(variables.dIntakeSpeed);
+        robot.intake_servo_2.setPower(variables.dIntakeSpeed);
     }
 
     private void ScissorLift(){
-        robot.ScissorLeft.setPower(LeftLiftPower);
-        robot.ScissorRight.setPower(RightLiftPower);
+        robot.ScissorLeft.setPower(variables.LeftLiftPower);
+        robot.ScissorRight.setPower(variables.RightLiftPower);
     }
 
     private void P6(){
-        robot.p6servo.setPosition(Variables.p6servo);
+        robot.p6servo.setPosition(variables.p6servo);
     }
 
     private void Drone(){
-        robot.drone.setPosition(Variables.dDronePos);
+        robot.drone.setPosition(variables.dDronePos);
     }
 
     private void Drive (){
-        robot.leftfront_drive.setPower(dLFDrivePower);
-        robot.rightfront_drive.setPower(dRFDrivePower);
-        robot.rightback_drive.setPower(dRBDrivePower);
-        robot.leftback_drive.setPower(dLBDrivePower);
+        robot.leftfront_drive.setPower(variables.dLFDrivePower);
+        robot.rightfront_drive.setPower(variables.dRFDrivePower);
+        robot.rightback_drive.setPower(variables.dRBDrivePower);
+        robot.leftback_drive.setPower(variables.dLBDrivePower);
     }
 }

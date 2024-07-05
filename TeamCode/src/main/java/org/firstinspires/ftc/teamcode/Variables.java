@@ -1,18 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 public class Variables {
     public LinearOpMode opMode = null;   // gain access to methods in the calling OpMode.
 
-    public static double wrist = 0;
-    public static double OutsidePixel = 0;
-    public static double InsidePixel = 0;
-    public static double Intake = 0;
     public static double p6servo = 0;
-    public static double ScissorLeft = 0;
-    public static double ScissorRight = 0;
-    public static double imu = 0;
 
     public static double wristHome = 0.49;
     public static double wristDelivery = 0.9;
@@ -32,10 +26,29 @@ public class Variables {
     double CountsPerMotorRev = 537.7;
     public double countsPerInch = CountsPerMotorRev / WheelCircomference;
 
+    //imu
+    public BNO055IMU.Parameters imuParameters;
 
-    //Lift Varables
+    //Drive Variables
+    public double dTurn = 0;
+    public double dDrive = 0;
+    public double dGamePadDegree = 0;
+    public double dMovement = 0;
+    public double dForward = 0;
+    public double dStrafe = 0;
+    public double dDriveScale = 1;
+    public double dDenominator = 1;
+    public double dLFDrivePower = 0;
+    public double dLBDrivePower = 0;
+    public double dRFDrivePower = 0;
+    public double dRBDrivePower = 0;
+
+    //Lift Variables
     public double LeftLiftPower = 0;
     public double RightLiftPower = 0;
+
+    //Intake
+    public double dIntakeSpeed = 0;
 
     //Servo variables
     public static double dWristIn = 0.49;
@@ -46,12 +59,9 @@ public class Variables {
     public static double dInsideIn = 0;
     public static double dInsideHold = 0.8;
 
-    public static double dIntakeSpeed = 0.9;
-
     public static double dDronePos = 0.5;
 
     public int iDeliveryState = 0;
-
 
     public Variables(LinearOpMode opmode) {
         this.opMode = opmode;
