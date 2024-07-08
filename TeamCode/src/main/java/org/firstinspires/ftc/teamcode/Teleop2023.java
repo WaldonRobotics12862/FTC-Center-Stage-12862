@@ -97,10 +97,10 @@ public class Teleop2023 extends LinearOpMode {
         variables.dForward = Math.sin(variables.dMovement / 180 * Math.PI) * variables.dDrive * variables.dDriveScale;
 
         variables.dDenominator = JavaUtil.maxOfList(JavaUtil.createListWith(Math.abs(variables.dForward) + Math.abs(variables.dStrafe + Math.abs(variables.dTurn)), 1));
-        variables.dLBDrivePower = ((variables.dForward * Math.abs(variables.dForward) + variables.dStrafe * Math.abs(variables.dStrafe)) + variables.dTurn) / variables.dDenominator;
-        variables.dRBDrivePower = ((variables.dForward * Math.abs(variables.dForward) - variables.dStrafe * Math.abs(variables.dStrafe)) - variables.dTurn) / variables.dDenominator;
-        variables.dLFDrivePower = ((variables.dForward * Math.abs(variables.dForward) + variables.dStrafe * Math.abs(variables.dStrafe)) - variables.dTurn) / variables.dDenominator;
-        variables.dRFDrivePower = ((variables.dForward * Math.abs(variables.dForward) - variables.dStrafe * Math.abs(variables.dStrafe)) + variables.dTurn) / variables.dDenominator;
+        variables.dLFDrivePower = ((variables.dForward * Math.abs(variables.dForward) + variables.dStrafe * Math.abs(variables.dStrafe)) + variables.dTurn) / variables.dDenominator;
+        variables.dRFDrivePower = ((variables.dForward * Math.abs(variables.dForward) - variables.dStrafe * Math.abs(variables.dStrafe)) - variables.dTurn) / variables.dDenominator;
+        variables.dRBDrivePower = ((variables.dForward * Math.abs(variables.dForward) + variables.dStrafe * Math.abs(variables.dStrafe)) - variables.dTurn) / variables.dDenominator;
+        variables.dLBDrivePower = ((variables.dForward * Math.abs(variables.dForward) - variables.dStrafe * Math.abs(variables.dStrafe)) + variables.dTurn) / variables.dDenominator;
     }
 
     private void GetCoPilotController(){
