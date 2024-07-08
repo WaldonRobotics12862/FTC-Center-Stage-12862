@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -20,7 +21,8 @@ public class Teleop2023 extends LinearOpMode {
     public void runOpMode() {
          robot.initialize();
          init_IMU();
-         // Wait for the match to begin.
+
+        // Wait for the match to begin.
         waitForStart();
         while (opModeIsActive()) {
             SparkFunOTOS.Pose2D pos = robot.myOtos.getPosition();
@@ -80,12 +82,12 @@ public class Teleop2023 extends LinearOpMode {
         if (gamepad1.y){
             robot.dP6ServoPosition = 0.5;
         }
-        if (gamepad1.left_bumper) {
-            variables.dDriveScale = 0.68;
-        }
-        if (gamepad1.right_bumper) {
-            variables.dDriveScale = 0.5;
-        }
+        //if (gamepad1.left_bumper) {
+        //    variables.dDriveScale = 0.68;
+        //}
+        //if (gamepad1.right_bumper) {
+        //    variables.dDriveScale = 0.5;
+        //}
         // Calculate the drive parameters
         variables.dTurn = (-gamepad1.right_stick_x * variables.dDriveScale); // adding the (double) casts this as a double variable to match the dTurn.  Not sure if the right_stick_x is a double by default or not)
         variables.dDrive = Range.clip(Math.sqrt(Math.pow(gamepad1.left_stick_y, 2) + Math.pow(gamepad1.left_stick_x, 2)), 0, 1);  // dDrive = sqrt(Y^2 + X^2). the clipping function clips any values to be just between 0 and 1
@@ -95,10 +97,10 @@ public class Teleop2023 extends LinearOpMode {
         variables.dForward = Math.sin(variables.dMovement / 180 * Math.PI) * variables.dDrive * variables.dDriveScale;
 
         variables.dDenominator = JavaUtil.maxOfList(JavaUtil.createListWith(Math.abs(variables.dForward) + Math.abs(variables.dStrafe + Math.abs(variables.dTurn)), 1));
-        variables.dLFDrivePower = ((variables.dForward * Math.abs(variables.dForward) + variables.dStrafe * Math.abs(variables.dStrafe)) + variables.dTurn) / variables.dDenominator;
-        variables.dRFDrivePower = ((variables.dForward * Math.abs(variables.dForward) - variables.dStrafe * Math.abs(variables.dStrafe)) - variables.dTurn) / variables.dDenominator;
-        variables.dLBDrivePower = ((variables.dForward * Math.abs(variables.dForward) + variables.dStrafe * Math.abs(variables.dStrafe)) - variables.dTurn) / variables.dDenominator;
-        variables.dLFDrivePower = ((variables.dForward * Math.abs(variables.dForward) - variables.dStrafe * Math.abs(variables.dStrafe)) + variables.dTurn) / variables.dDenominator;
+        variables.dLBDrivePower = ((variables.dForward * Math.abs(variables.dForward) + variables.dStrafe * Math.abs(variables.dStrafe)) + variables.dTurn) / variables.dDenominator;
+        variables.dRBDrivePower = ((variables.dForward * Math.abs(variables.dForward) - variables.dStrafe * Math.abs(variables.dStrafe)) - variables.dTurn) / variables.dDenominator;
+        variables.dLFDrivePower = ((variables.dForward * Math.abs(variables.dForward) + variables.dStrafe * Math.abs(variables.dStrafe)) - variables.dTurn) / variables.dDenominator;
+        variables.dRFDrivePower = ((variables.dForward * Math.abs(variables.dForward) - variables.dStrafe * Math.abs(variables.dStrafe)) + variables.dTurn) / variables.dDenominator;
     }
 
     private void GetCoPilotController(){
@@ -197,7 +199,7 @@ public class Teleop2023 extends LinearOpMode {
     private void Drive (){
         robot.leftfront_drive.setPower(variables.dLFDrivePower);
         robot.rightfront_drive.setPower(variables.dRFDrivePower);
-        robot.rightback_drive.setPower(variables.dRBDrivePower);
         robot.leftback_drive.setPower(variables.dLBDrivePower);
+        robot.rightback_drive.setPower(variables.dRBDrivePower);
     }
 }

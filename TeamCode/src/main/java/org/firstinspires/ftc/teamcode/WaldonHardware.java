@@ -127,6 +127,10 @@ public class WaldonHardware {
         leftfront_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightback_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightfront_drive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightback_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightfront_drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftback_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightfront_drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
